@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sirampog PMD - EKRAF Profiling</title>
+  <link rel="shortcut icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Library untuk Cetak PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+	<div id="loginScreen" class="login-screen">
+		<div class="login-card">
+		  <div class="login-logo">
+			<div class="logo-mark" style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 16px auto;">EK</div>
+			<h2>EKRAF<span>Pro</span></h2>
+			<p>Sistem Profiling Ekonomi Kreatif Brebes</p>
+		  </div>
+		  
+		  <form id="loginForm">
+			<div class="input-group">
+			  <label>Username</label>
+			  <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
+			</div>
+			<div class="input-group">
+			  <label>Password</label>
+			  <input type="password" id="password" placeholder="Masukkan password" required>
+			</div>
+			
+			<div id="loginError" class="login-error">Username atau password salah!</div>
+			
+			<button type="submit" class="btn-login">
+			  Masuk ke Sistem
+			  <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+			</button>
+		  </form>
+		  
+		  <div class="login-footer">
+			&copy; 2026 Dinas Ekraf Kab. Brebes
+		  </div>
+		</div>
+	</div>
+  
+  <!-- Animated Background -->
+  <div class="bg-blobs">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">EK</div>
+      <div>
+        <h1>EKRAF<span>Pro</span></h1>
+        <small>Profiling Platform</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-page="pelaku">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Data Pelaku
+      </a>
+      <a class="nav-item" data-page="subsektor">
+        <svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.18L5.5 7.5 12 11.18l6.5-3.68L12 4.18z"/></svg>
+        21 Subsektor
+      </a>
+      <a class="nav-item" data-page="peta">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+        Sebaran Wilayah
+      </a>
+      <a class="nav-item" data-page="analisis">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+        Analisis & Rekomendasi
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" style="justify-content: space-between;">
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <div class="avatar">AD</div>
+        <div>
+          <strong>Admin Dinas</strong>
+          <small>Super Admin</small>
+        </div>
+      </div>
+      <button onclick="logout()" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px;" title="Logout">
+        <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">Dashboard Profiling</h2>
+        <p id="pageSub">Ringkasan data pelaku ekonomi kreatif nasional</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/></svg>
+          <input type="text" id="globalSearch" placeholder="Cari pelaku, subsektor, wilayah..."/>
+        </div>
+        <button class="btn-primary" id="btnTambah">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Tambah Pelaku
+        </button>
+      </div>
+    </header>
+
+    <!-- ================= DASHBOARD ================= -->
+    <section class="page active" id="page-dashboard">
+		<div class="dashboard-filter" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border);">
+			<div style="display: flex; align-items: center; gap: 10px;">
+			  <span style="font-size: 20px;">📍</span>
+			  <div>
+				<h4 style="font-size: 14px; margin: 0;">Filter Wilayah</h4>
+				<small style="color: var(--text-dim); font-size: 11px;">Pilih kecamatan untuk melihat data spesifik</small>
+			  </div>
+			</div>
+			<select id="dashboardFilterWilayah" style="background: rgba(15,23,42,0.6); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; font-family: inherit; font-size: 13px; outline: none; cursor: pointer; min-width: 200px;">
+			  <option value="">Semua Kecamatan (Brebes)</option>
+			  <!-- Opsi akan diisi via JavaScript -->
+			</select>
+		</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon icon-blue">👥</div>
+          <div>
+            <small>Total Pelaku</small>
+            <h3 data-count="12480">0</h3>
+            <span class="trend up">▲ 12.4% YoY</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-purple">🏷️</div>
+          <div>
+            <small>Subsektor Aktif</small>
+            <h3 data-count="21">0</h3>
+            <span class="trend up">100% tercakup</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-green">📍</div>
+          <div>
+            <small>Wilayah Terdata</small>
+            <h3 data-count="514">0</h3>
+            <span class="trend up">34 Provinsi</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-orange">📈</div>
+          <div>
+            <small>Kapasitas Pasar</small>
+            <h3 data-count="78">0</h3>
+            <span class="trend up">Skor rata-rata</span>
+          </div>
+        </div>
+      </div>
+
+		<div class="grid-2">
+		  <div class="card">
+			<div class="card-head">
+			  <h4>Distribusi Pelaku per Subsektor</h4>
+			  <span class="badge">Top 10</span>
+			</div>
+			<div class="chart-box md">
+			  <canvas id="chartSubsektor"></canvas>
+			</div>
+		  </div>
+		  <div class="card">
+			<div class="card-head">
+			  <h4>Sebaran Pelaku per Provinsi</h4>
+			  <span class="badge">Nasional</span>
+			</div>
+			<div class="chart-box md">
+			  <canvas id="chartProvinsi"></canvas>
+			</div>
+		  </div>
+		</div>
+
+		<div class="grid-2">
+		  <div class="card">
+			<div class="card-head"><h4>Tren Pertumbuhan Pelaku (6 Bulan)</h4></div>
+			<div class="chart-box sm">
+			  <canvas id="chartTren"></canvas>
+			</div>
+		  </div>
+		  <div class="card">
+			<div class="card-head"><h4>Kebutuhan Fasilitasi</h4></div>
+			<div class="chart-box sm">
+			  <canvas id="chartFasilitasi"></canvas>
+			</div>
+		  </div>
+		</div>
+    </section>
+
+    <!-- ================= DATA PELAKU ================= -->
+    <section class="page" id="page-pelaku">
+      <div class="card">
+        <div class="card-head">
+          <h4>Basis Data Pelaku Ekonomi Kreatif</h4>
+          <div class="filter-group">
+            <select id="filterSubsektor"><option value="">Semua Subsektor</option></select>
+            <select id="filterWilayah"><option value="">Semua Wilayah</option></select>
+            <button class="btn-ghost" id="btnExport">⬇ Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="tabelPelaku">
+            <thead>
+              <tr>
+                <th>#</th><th>Nama Pelaku</th><th>Subsektor</th><th>Wilayah</th>
+                <th>Potensi</th><th>Kapasitas Pasar</th><th>Fasilitasi</th><th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <span id="infoTabel">Menampilkan 0 data</span>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SUBSEKTOR ================= -->
+    <section class="page" id="page-subsektor">
+      <div class="subsektor-grid" id="subsektorGrid"></div>
+    </section>
+
+    <!-- ================= PETA WILAYAH ================= -->
+	<section class="page" id="page-peta">
+	  <div class="card">
+		<div class="card-head">
+		  <h4>Peta Sebaran Pelaku Ekonomi Kreatif</h4>
+		  <span class="badge">Interaktif</span>
+		</div>
+		<!-- Container Peta Baru -->
+		<div id="map" class="leaflet-map"></div>
+		<!-- Legend Baru -->
+		<div class="map-legend">
+		  <span style="--c:#818cf8">Pelaku Sedikit</span>
+		  <span style="--c:#22d3ee">Pelaku Sedang</span>
+		  <span style="--c:#f59e0b">Pelaku Banyak</span>
+		</div>
+	  </div>
+	  
+	  <!-- Grid Chart bawah tetap sama -->
+	  <div class="grid-2" style="margin-top: 20px;">
+		<div class="card">
+		  <div class="card-head"><h4>Top Wilayah Pelaku Terbanyak</h4></div>
+		  <div class="chart-box md"><canvas id="chartWilayahTop"></canvas></div>
+		</div>
+		<div class="card">
+		  <div class="card-head"><h4>Potensi vs Kapasitas Pasar per Wilayah</h4></div>
+		  <div class="chart-box md"><canvas id="chartPotensiKapasitas"></canvas></div>
+		</div>
+	  </div>
+	</section>
+
+    <!-- ================= ANALISIS ================= -->
+    <section class="page" id="page-analisis">
+	  <!-- Tombol Cetak -->
+	  <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+		<button class="btn-primary" id="btnCetakPdf" style="background: linear-gradient(135deg, #10b981, #34d399);">
+		  <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:white; margin-right:6px;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+		  Cetak Laporan PDF
+		</button>
+	  </div>
+
+	  <!-- Bungkus konten yang mau dicetak dengan ID -->
+	  <div id="areaLaporan" style="background: transparent; padding: 10px;">
+		  <!-- HEADER CETAK (Tetap) -->
+		  <div style="text-align: center; margin-bottom: 30px; color: var(--text);">
+			<h1 style="font-size: 24px; margin-bottom: 5px;">LAPORAN PROFILING EKONOMI KREATIF</h1>
+			<h2 style="font-size: 18px; color: var(--text-dim); margin-bottom: 5px;">Kabupaten Brebes</h2>
+			<p style="font-size: 12px;">Dicetak pada: <span id="tglCetak"></span></p>
+		  </div>
+
+		  <!-- 🔥 CHART KUADRAN BARU -->
+		  <div class="card" style="margin-bottom: 20px;">
+			<div class="card-head">
+			  <h4>Matriks Kuadran (BCG Matrix) - Pemetaan Pelaku</h4>
+			  <span class="badge">Potensi vs Pasar</span>
+			</div>
+			<div class="chart-box lg" style="height: 400px;">
+			  <canvas id="chartKuadran"></canvas>
+			</div>
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; font-size: 12px; color: var(--text-dim);">
+			  <div>⭐ <b>Bintang (Potensi Tinggi, Pasar Tinggi):</b> Ekspansi / Go International</div>
+			  <div>❓ <b>Tanda Tanya (Potensi Tinggi, Pasar Rendah):</b> Fasilitasi Pemasaran</div>
+			  <div>🐄 <b>Sapi Perah (Potensi Rendah, Pasar Tinggi):</b> Pelatihan Kualitas Produk</div>
+			  <div>🐕 <b>Anjing (Potensi Rendah, Pasar Rendah):</b> Inkubasi / Pendampingan Intensif</div>
+			</div>
+		  </div>
+
+		  <!-- KONTEN ANALISIS LAMA (Tetap) -->
+		  <div class="grid-2">
+			<div class="card highlight">
+			  <div class="card-head"><h4>🎯 Rekomendasi Program Kebijakan</h4></div>
+			  <ul class="reco-list" id="recoList"></ul>
+			</div>
+			<div class="card highlight">
+			  <div class="card-head"><h4>🔍 Bahan Tindak Lanjut Pengawasan</h4></div>
+			  <ul class="reco-list" id="followupList"></ul>
+			</div>
+		  </div>
+		  <div class="card" style="margin-top: 20px;">
+			<div class="card-head"><h4>Ringkasan Insight Otomatis</h4></div>
+			<div class="insight-box" id="insightBox"></div>
+		  </div>
+		</div>
+	</section>
+
+  </main>
+
+  <!-- MODAL TAMBAH -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="modalTitle">Tambah Pelaku Ekonomi Kreatif</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <form id="formPelaku">
+	    <input type="hidden" name="id" id="editId" value="" />
+        <div class="form-grid">
+          <label>Nama Pelaku<input type="text" name="nama" required/></label>
+          <label>Subsektor
+            <select name="subsektor" id="formSubsektor" required></select>
+          </label>
+          <label>Kecamatan
+            <select name="wilayah" id="formWilayah" required></select>
+          </label>
+          <label>Potensi (0-100)<input type="number" name="potensi" min="0" max="100" required/></label>
+          <label>Kapasitas Pasar (0-100)<input type="number" name="pasar" min="0" max="100" required/></label>
+          <label>Kebutuhan Fasilitasi
+            <select name="fasilitasi">
+              <option>Pembiayaan</option>
+              <option>Pelatihan</option>
+              <option>Pemasaran</option>
+              <option>Digitalisasi</option>
+              <option>Infrastruktur</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="cancelModal">Batal</button>
+          <button type="submit" class="btn-primary">Simpan Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
